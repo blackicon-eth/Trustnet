@@ -1,7 +1,6 @@
 import { sdk } from "@farcaster/frame-sdk";
 import { useCallback, useState } from "react";
 import { MESSAGE_EXPIRATION_TIME } from "@/lib/constants";
-import { MiniKit } from "@worldcoin/minikit-js";
 import { ContextType, useMiniAppContext } from "./use-miniapp-context";
 
 export const useSignIn = () => {
@@ -20,39 +19,17 @@ export const useSignIn = () => {
       }
 
       if (contextType === ContextType.Farcaster && !context.user?.fid) {
-        throw new Error(
-          "No FID found. Please make sure you're logged into Warpcast."
-        );
+        throw new Error("No FID found. Please make sure you're logged into Warpcast.");
       }
       let referrerFid: number | null = null;
       let result: { message: string; signature: string; address?: string };
-      if (contextType === ContextType.Worldcoin) {
-        const nonce = Math.random().toString(36).substring(2);
-        const message = `Sign in to MiniApp. Nonce: ${nonce}`;
-        const miniKitResult = await MiniKit.commandsAsync.signMessage({
-          message,
-        });
-        if (miniKitResult.finalPayload.status !== "success") {
-          throw new Error("[MiniKit] Failed to sign message");
-        }
-        result = {
-          message: miniKitResult.commandPayload!.message,
-          signature: miniKitResult.finalPayload.signature,
-          address: miniKitResult.finalPayload.address,
-        };
-      } else {
-        result = await sdk.actions.signIn({
-          nonce: Math.random().toString(36).substring(2),
-          notBefore: new Date().toISOString(),
-          expirationTime: new Date(
-            Date.now() + MESSAGE_EXPIRATION_TIME
-          ).toISOString(),
-        });
-        referrerFid =
-          context.location?.type === "cast_embed"
-            ? context.location.cast.fid
-            : null;
-      }
+
+      result = await sdk.actions.signIn({
+        nonce: Math.random().toString(36).substring(2),
+        notBefore: new Date().toISOString(),
+        expirationTime: new Date(Date.now() + MESSAGE_EXPIRATION_TIME).toISOString(),
+      });
+      referrerFid = context.location?.type === "cast_embed" ? context.location.cast.fid : null;
 
       const res = await fetch("/api/auth/sign-in", {
         method: "POST",
@@ -80,8 +57,7 @@ export const useSignIn = () => {
       setIsSignedIn(true);
       return data;
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Sign in failed";
+      const errorMessage = err instanceof Error ? err.message : "Sign in failed";
       setError(errorMessage);
       throw err;
     } finally {

@@ -1,7 +1,4 @@
-import {
-  SendNotificationRequest,
-  sendNotificationResponseSchema,
-} from "@farcaster/frame-sdk";
+import { SendNotificationRequest, sendNotificationResponseSchema } from "@farcaster/frame-sdk";
 import { env } from "./env";
 
 const appUrl = env.NEXT_PUBLIC_URL || "";
@@ -16,11 +13,9 @@ type SendFrameNotificationResult =
   | { state: "success" };
 
 export async function sendFrameNotification({
-  fid,
   title,
   body,
 }: {
-  fid: number;
   title: string;
   body: string;
 }): Promise<SendFrameNotificationResult> {

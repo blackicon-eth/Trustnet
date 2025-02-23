@@ -1,11 +1,9 @@
 import { useFrame } from "../components/farcaster-provider";
-import { MiniKit } from "@worldcoin/minikit-js";
 import { FrameContext } from "@farcaster/frame-core/dist/context";
 import sdk from "@farcaster/frame-sdk";
 
 export enum ContextType {
   Farcaster = "farcaster",
-  Worldcoin = "worldcoin",
 }
 
 // Define specific types for each context
@@ -15,12 +13,6 @@ interface FarcasterContextResult {
   actions: typeof sdk.actions | null;
 }
 
-interface WorldcoinContextResult {
-  type: ContextType.Worldcoin;
-  context: MiniKit;
-  actions: null;
-}
-
 interface NoContextResult {
   type: null;
   context: null;
@@ -28,10 +20,7 @@ interface NoContextResult {
 }
 
 // Union type of all possible results
-type ContextResult =
-  | FarcasterContextResult
-  | WorldcoinContextResult
-  | NoContextResult;
+type ContextResult = FarcasterContextResult | NoContextResult;
 
 export const useMiniAppContext = (): ContextResult => {
   // Try to get Farcaster context
@@ -43,24 +32,14 @@ export const useMiniAppContext = (): ContextResult => {
         context: farcasterContext.context,
         actions: farcasterContext.actions,
       } as FarcasterContextResult;
+    } else {
+      throw new Error("No context found");
     }
   } catch (e) {
-    // Ignore error if not in Farcaster context
-  }
-
-  // Check for Worldcoin/MiniKit context
-  if (typeof window !== "undefined" && MiniKit.isInstalled()) {
     return {
-      type: ContextType.Worldcoin,
-      context: MiniKit,
+      type: null,
+      context: null,
       actions: null,
-    } as WorldcoinContextResult;
+    } as NoContextResult;
   }
-
-  // No context found
-  return {
-    type: null,
-    context: null,
-    actions: null,
-  } as NoContextResult;
 };

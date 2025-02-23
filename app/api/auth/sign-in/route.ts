@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import * as jose from "jose";
 import { verifyMessage } from "viem";
 import { fetchUser } from "@/lib/neynar";

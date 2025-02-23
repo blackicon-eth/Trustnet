@@ -8,10 +8,10 @@ const frame = {
   version: "next",
   imageUrl: `${appUrl}/images/feed.png`,
   button: {
-    title: "Launch App",
+    title: "Launch Trustnet",
     action: {
       type: "launch_frame",
-      name: "Mini-app Starter",
+      name: "Trustnet",
       url: appUrl,
       splashImageUrl: `${appUrl}/images/splash.png`,
       splashBackgroundColor: "#f7f7f7",
@@ -21,10 +21,10 @@ const frame = {
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Mini-app Starter",
+    title: "Trustnet",
     openGraph: {
-      title: "Mini-app Starter",
-      description: "A starter for mini-apps",
+      title: "Trustnet",
+      description: "Undercollateralized lending protocol",
     },
     other: {
       "fc:frame": JSON.stringify(frame),
