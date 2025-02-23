@@ -1,6 +1,6 @@
 "use client";
 
-import { useSignIn } from "@/hooks/use-sign-in";
+import { useSignIn } from "@/lib/hooks/use-sign-in";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -22,10 +22,7 @@ export default function Home() {
 
       setTestResult(`Auth test succeeded! Server response: ${data.message}`);
     } catch (error) {
-      setTestResult(
-        "Auth test failed: " +
-          (error instanceof Error ? error.message : "Unknown error")
-      );
+      setTestResult("Auth test failed: " + (error instanceof Error ? error.message : "Unknown error"));
     }
   };
 
@@ -33,9 +30,7 @@ export default function Home() {
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold">Welcome</h1>
-        <p className="text-lg text-muted-foreground">
-          {isSignedIn ? "You are signed in!" : "Sign in to get started"}
-        </p>
+        <p className="text-lg text-muted-foreground">{isSignedIn ? "You are signed in!" : "Sign in to get started"}</p>
 
         {!isSignedIn ? (
           <button
@@ -61,11 +56,7 @@ export default function Home() {
               Sign Out
             </button>
 
-            {testResult && (
-              <div className="mt-4 p-4 rounded-lg bg-gray-100 text-black text-sm">
-                {testResult}
-              </div>
-            )}
+            {testResult && <div className="mt-4 p-4 rounded-lg bg-gray-100 text-black text-sm">{testResult}</div>}
           </div>
         )}
       </div>

@@ -13,12 +13,16 @@ type SendFrameNotificationResult =
   | { state: "success" };
 
 export async function sendFrameNotification({
+  fid,
   title,
   body,
 }: {
+  fid: number;
   title: string;
   body: string;
 }): Promise<SendFrameNotificationResult> {
+  console.log("User FID", fid);
+
   // TODO: Get notification details
   const notificationDetails = { url: "", token: "" };
 

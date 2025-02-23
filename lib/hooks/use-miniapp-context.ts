@@ -1,4 +1,4 @@
-import { useFrame } from "../components/farcaster-provider";
+import { useFrame } from "../../components/farcaster-provider";
 import { FrameContext } from "@farcaster/frame-core/dist/context";
 import sdk from "@farcaster/frame-sdk";
 
