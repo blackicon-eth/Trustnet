@@ -5,9 +5,12 @@ interface SafeAreaContainerProps {
   insets?: SafeAreaInsets;
 }
 
-export const SafeAreaContainer = ({ children, insets }: SafeAreaContainerProps) => (
+export const SafeAreaContainer = ({
+  children,
+  insets,
+}: SafeAreaContainerProps) => (
   <main
-    className="flex min-h-screen flex-col items-center justify-center p-24 gap-y-3"
+    className="flex flex-col items-center justify-center"
     style={{
       marginTop: insets?.top ?? 0,
       marginBottom: insets?.bottom ?? 0,

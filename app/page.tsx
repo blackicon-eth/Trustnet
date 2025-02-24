@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import App from "@/components/pages/app";
 import { env } from "@/lib/env";
+import Main from "@/components/pages/main";
 
 const appUrl = env.NEXT_PUBLIC_URL;
 
@@ -33,5 +33,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function Home() {
-  return <App />;
+  return <Main />;
 }

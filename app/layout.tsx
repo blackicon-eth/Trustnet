@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
-import dynamic from "next/dynamic";
-import { FrameProvider } from "@/components/farcaster-provider";
+import { Providers } from "./providers";
+import { Toaster } from "sonner";
 
-const inter = Inter({ subsets: ["latin"] });
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Trustnet",
@@ -16,15 +16,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const ErudaProvider = dynamic(() => import("../components/Eruda").then((c) => c.ErudaProvider), {
-    ssr: false,
-  });
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <ErudaProvider>
-          <FrameProvider>{children}</FrameProvider>
-        </ErudaProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${montserrat.className} size-full antialiased`}>
+        <Providers>
+          {children}
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );

@@ -1,12 +1,25 @@
 "use client";
 
+import {
+  ContextType,
+  useMiniAppContext,
+} from "@/lib/hooks/use-miniapp-context";
 import { useSignIn } from "@/lib/hooks/use-sign-in";
-import Link from "next/link";
 import { useState } from "react";
 
-export default function Home() {
+export default function HomePage() {
+  const { type: contextType, context, actions } = useMiniAppContext();
   const { signIn, isLoading, isSignedIn, logout } = useSignIn();
   const [testResult, setTestResult] = useState<string>("");
+
+  const handlePresave = async () => {
+    if (contextType === ContextType.Farcaster) {
+      if (!context.client.added && actions) {
+        await actions.addFrame();
+        // add to db
+      }
+    }
+  };
 
   const testAuth = async () => {
     try {
@@ -22,15 +35,20 @@ export default function Home() {
 
       setTestResult(`Auth test succeeded! Server response: ${data.message}`);
     } catch (error) {
-      setTestResult("Auth test failed: " + (error instanceof Error ? error.message : "Unknown error"));
+      setTestResult(
+        "Auth test failed: " +
+          (error instanceof Error ? error.message : "Unknown error")
+      );
     }
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4">
+    <div className="flex flex-col items-center justify-center p-4 gap-3">
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold">Welcome</h1>
-        <p className="text-lg text-muted-foreground">{isSignedIn ? "You are signed in!" : "Sign in to get started"}</p>
+        <p className="text-lg text-muted-foreground">
+          {isSignedIn ? "You are signed in!" : "Sign in to get started"}
+        </p>
 
         {!isSignedIn ? (
           <button
@@ -56,13 +74,20 @@ export default function Home() {
               Sign Out
             </button>
 
-            {testResult && <div className="mt-4 p-4 rounded-lg bg-gray-100 text-black text-sm">{testResult}</div>}
+            {testResult && (
+              <div className="mt-4 p-4 rounded-lg bg-gray-100 text-black text-sm">
+                {testResult}
+              </div>
+            )}
           </div>
         )}
       </div>
-      <Link href="/presave" className="text-lg text-muted-foreground mt-4">
-        Go to Presave
-      </Link>
+      <button
+        onClick={handlePresave}
+        className="px-6 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+      >
+        Presave
+      </button>
     </div>
   );
 }
