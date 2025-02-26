@@ -8,6 +8,7 @@ import {
 import { FullPageError } from "../custom-ui/fullpage-error";
 import { useSignIn } from "@/lib/hooks/use-sign-in";
 import { User } from "@/lib/db/schemas/db.schema";
+import { FullPageLoader } from "../custom-ui/fullpage-loader";
 
 const UserProviderContext = createContext<
   | {
@@ -41,6 +42,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
     registerUser();
   }, [signIn]);
+
+  // Loading state
+  if (isSigningIn) {
+    return <FullPageLoader />;
+  }
 
   // Error state
   if (!isSigningIn && signInError) {

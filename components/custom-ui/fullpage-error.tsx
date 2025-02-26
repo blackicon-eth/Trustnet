@@ -21,7 +21,7 @@ export const FullPageError = ({
     >
       {errorMessage && (
         <>
-          <p className="text-white text-2xl">Unexpected Error:</p>
+          <p className="text-white text-2xl">Uh oh! 😞</p>
           <p className="text-red-500">{errorMessage}</p>
         </>
       )}
