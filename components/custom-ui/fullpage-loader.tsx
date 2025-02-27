@@ -13,7 +13,7 @@ export const FullPageLoader = ({
   return (
     <div
       className={cn(
-        "flex flex-col min-h-screen items-center justify-center bg-black text-white",
+        "flex flex-col min-h-screen items-center justify-center bg-background text-white",
         className
       )}
     >

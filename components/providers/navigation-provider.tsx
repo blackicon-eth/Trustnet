@@ -12,7 +12,7 @@ export const NavigationProvider = ({ children }: { children: ReactNode }) => {
 
   // The padding top and bottom are hardcoded here because the header and footer are fixed
   return (
-    <div className="pt-[68px] pb-[74px] min-h-screen bg-black text-white transition-all duration-300">
+    <div className="pt-[68px] pb-[74px] min-h-screen bg-background text-white transition-all duration-300">
       <Header />
       {children}
       <Footer />

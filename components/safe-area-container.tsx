@@ -10,7 +10,7 @@ export const SafeAreaContainer = ({
   insets,
 }: SafeAreaContainerProps) => (
   <main
-    className="flex flex-col items-center justify-center"
+    className="flex flex-col justify-start items-start w-full"
     style={{
       marginTop: insets?.top ?? 0,
       marginBottom: insets?.bottom ?? 0,

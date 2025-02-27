@@ -15,7 +15,7 @@ export const FullPageError = ({
   return (
     <div
       className={cn(
-        "flex flex-col min-h-screen items-center justify-center bg-black px-6 text-center gap-2",
+        "flex flex-col min-h-screen items-center justify-center bg-background px-6 text-center gap-2",
         className
       )}
     >
