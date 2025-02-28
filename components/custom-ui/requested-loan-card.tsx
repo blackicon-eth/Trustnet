@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { User } from "@/lib/db/schemas/db.schema";
-import { formatUnixTimestamp } from "@/lib/utils";
+import { cn, formatUnixTimestamp } from "@/lib/utils";
 import { motion } from "framer-motion";
 import ky from "ky";
 import { useCallback, useEffect, useState } from "react";
@@ -10,9 +10,17 @@ import {
   ContextType,
   useMiniAppContext,
 } from "@/lib/hooks/use-miniapp-context";
-import { Drawer, DrawerContent, DrawerTrigger } from "../shadcn-ui/drawer";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+  DrawerTrigger,
+} from "../shadcn-ui/drawer";
 import { Button } from "../shadcn-ui/button";
 import { RequestedLoan } from "@/lib/types";
+import { useCart } from "../providers/cart-provider";
+import { LoaderCircle } from "lucide-react";
 
 interface RequestedLoanCardProps {
   index: number;
@@ -22,7 +30,11 @@ interface RequestedLoanCardProps {
 export const RequestedLoanCard = ({ index, loan }: RequestedLoanCardProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
+  const [isCartLoading, setIsCartLoading] = useState(false);
   const { type: contextType, context } = useMiniAppContext();
+  const { addLoan, removeLoan, cart } = useCart();
+
+  const isLoanInCart = cart.some((b) => b.id === loan.id);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -54,7 +66,12 @@ export const RequestedLoanCard = ({ index, loan }: RequestedLoanCardProps) => {
     >
       <Drawer>
         <DrawerTrigger asChild>
-          <button className="flex items-start justify-start border-[1px] w-full border-card/20 bg-card rounded-lg">
+          <button
+            className={cn(
+              "flex items-start justify-start border-[1px] w-full border-card/20 bg-card hover:bg-card/80 transition-all duration-150 rounded-lg",
+              isLoanInCart && "border-green-600/80"
+            )}
+          >
             <img
               src={loan.loanImageUrl}
               alt="Loan Image"
@@ -117,8 +134,10 @@ export const RequestedLoanCard = ({ index, loan }: RequestedLoanCardProps) => {
         </DrawerTrigger>
         <DrawerContent
           handleClassName="bg-card"
-          className="h-[90%] bg-foreground border-card border-[1px] text-white"
+          className="h-[90%] bg-foreground border-card text-white"
         >
+          <DrawerTitle className="hidden" />
+          <DrawerDescription className="hidden" />
           <div className="flex flex-col justify-between items-center size-full pb-5 pt-4 gap-3">
             <div className="flex flex-col gap-1 w-full">
               <div className="relative w-full h-[90px]">
@@ -183,7 +202,35 @@ export const RequestedLoanCard = ({ index, loan }: RequestedLoanCardProps) => {
                 </div>
               </div>
             </div>
-            <Button className="w-[90%]">Add to Cart</Button>
+            <Button
+              onClick={() => {
+                setIsCartLoading(true);
+                if (isLoanInCart) {
+                  removeLoan(loan);
+                } else {
+                  addLoan(loan);
+                }
+                setTimeout(() => {
+                  setIsCartLoading(false);
+                }, 800);
+              }}
+              className={cn(
+                "w-[90%] font-semibold",
+                isCartLoading && "bg-card hover:bg-card opacity-50",
+                isLoanInCart &&
+                  !isCartLoading &&
+                  "bg-red-600/80 hover:bg-red-700/80"
+              )}
+              disabled={isCartLoading}
+            >
+              {isCartLoading ? (
+                <LoaderCircle className="w-5 h-5 animate-spin" />
+              ) : isLoanInCart ? (
+                "Remove from Cart"
+              ) : (
+                "Add to Cart"
+              )}
+            </Button>
           </div>
         </DrawerContent>
       </Drawer>

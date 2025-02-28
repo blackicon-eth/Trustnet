@@ -1,61 +1,26 @@
 "use client";
 
 import { RequestedLoanCard } from "@/components/custom-ui/requested-loan-card";
-import { useRegisteredUser } from "@/components/providers/user-provider";
-import {
-  ContextType,
-  useMiniAppContext,
-} from "@/lib/hooks/use-miniapp-context";
 import { motion } from "framer-motion";
-
-const mockRequestedLoans = [
-  {
-    id: 1,
-    userFid: 215293,
-    title: "Car Loan",
-    description: "I want to take this loan to buy a new car!! :)",
-    loanImageUrl: "https://picsum.photos/200/300",
-    amount: 1000,
-    collateralPercentage: 90,
-    interestPercentage: 10,
-    deadline: 1754435200, // unix timestamp 1 month from now
-  },
-  {
-    id: 2,
-    userFid: 215293,
-    title: "House Loan",
-    description: "I want to take this loan to buy a new house",
-    loanImageUrl: "https://picsum.photos/200/300",
-    amount: 1000,
-    collateralPercentage: 95,
-    interestPercentage: 15,
-    deadline: 1757435200, // unix timestamp 1 month from now
-  },
-  {
-    id: 3,
-    userFid: 215293,
-    title: "Builder Loan",
-    description: "I want to take this loan to build a new web 3 project",
-    loanImageUrl: "https://picsum.photos/200/300",
-    amount: 5500,
-    collateralPercentage: 86,
-    interestPercentage: 12,
-    deadline: 1759435200, // unix timestamp 1 month from now
-  },
-];
+import { useState } from "react";
+import { mockRequestedLoans } from "@/lib/constants";
+import { usePagination } from "@/lib/hooks/use-pagination";
+import { FiltersButton } from "@/components/custom-ui/filters-button";
+import { useLoansFilter } from "@/lib/hooks/use-loans-filter";
 
 export default function HomePage() {
-  const { type: contextType, context, actions } = useMiniAppContext();
-  const { user } = useRegisteredUser();
-
-  const handlePresave = async () => {
-    if (contextType === ContextType.Farcaster) {
-      if (!context.client.added && actions) {
-        await actions.addFrame();
-        // add to db
-      }
-    }
-  };
+  const [filters, setFilters] = useState({
+    minDeadline: 1604435200,
+    maxDeadline: 1914435200,
+    minAmount: 10,
+    maxAmount: 100000,
+    minCollateral: 50,
+    maxCollateral: 100,
+    minInterest: 5,
+    maxInterest: 30,
+  });
+  const { filteredLoans } = useLoansFilter(mockRequestedLoans, filters);
+  const { currentData: currentLoans, Pager } = usePagination(filteredLoans, 3);
 
   return (
     <motion.div
@@ -65,12 +30,27 @@ export default function HomePage() {
       exit={{ opacity: 0 }}
       className="flex flex-col items-center justify-start size-full p-4 gap-3.5"
     >
-      <h1 className="text-2xl font-bold w-full align-top">Available Loans</h1>
-      <div className="flex flex-col items-center justify-start gap-2.5 w-full">
-        {mockRequestedLoans.map((loan, index) => (
-          <RequestedLoanCard key={loan.id} index={index} loan={loan} />
-        ))}
+      <div className="flex items-center justify-between w-full">
+        <h1 className="text-2xl font-bold w-full align-top">Available Loans</h1>
+        <FiltersButton filters={filters} setFilters={setFilters} />
       </div>
+      {filteredLoans.length > 0 ? (
+        <>
+          <div className="flex flex-col items-center justify-start gap-2.5 w-full">
+            {currentLoans.map((loan, index) => (
+              <RequestedLoanCard key={loan.id} index={index} loan={loan} />
+            ))}
+          </div>
+          <Pager />
+        </>
+      ) : (
+        <div className="flex flex-col h-[300px] items-center justify-center gap-1">
+          <p className="text-2xl font-bold">No loans found :(</p>
+          <p className="text-sm text-muted-foreground">
+            Try changing the filters or come back later!
+          </p>
+        </div>
+      )}
     </motion.div>
   );
 }

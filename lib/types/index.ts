@@ -16,3 +16,14 @@ export interface RequestedLoan {
   interestPercentage: number;
   deadline: number;
 }
+
+export interface Filters {
+  minDeadline: number;
+  maxDeadline: number;
+  minAmount: number;
+  maxAmount: number;
+  minCollateral: number;
+  maxCollateral: number;
+  minInterest: number;
+  maxInterest: number;
+}

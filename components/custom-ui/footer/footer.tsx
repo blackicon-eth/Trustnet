@@ -5,10 +5,11 @@ import { House, ReceiptText, ShoppingCart, User } from "lucide-react";
 import { FooterButton } from "./footer-button";
 import { usePageContent } from "@/components/providers/page-content-provider";
 import { PageContent } from "@/lib/enums";
+import { useCart } from "@/components/providers/cart-provider";
 
 const Footer = () => {
   const { pageContent, setPageContent } = usePageContent();
-
+  const { cart } = useCart();
   return (
     <motion.footer
       className="fixed bottom-0 left-0 right-0 z-50"
@@ -44,16 +45,25 @@ const Footer = () => {
         />
 
         {/* Cart */}
-        <FooterButton
-          icon={
-            <ShoppingCart
-              size={24}
-              className={pageContent === PageContent.CART ? "text-primary" : ""}
-            />
-          }
-          label="Cart"
-          onClick={() => setPageContent(PageContent.CART)}
-        />
+        <div className="relative">
+          <FooterButton
+            icon={
+              <ShoppingCart
+                size={24}
+                className={
+                  pageContent === PageContent.CART ? "text-primary" : ""
+                }
+              />
+            }
+            label="Cart"
+            onClick={() => setPageContent(PageContent.CART)}
+          />
+          {cart.length > 0 && (
+            <div className="absolute -top-1 right-1.5 w-4 h-4 bg-primary rounded-full flex items-center justify-center">
+              <p className="text-xs font-bold">{cart.length}</p>
+            </div>
+          )}
+        </div>
 
         {/* My Account */}
         <FooterButton
