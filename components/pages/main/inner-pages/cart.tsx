@@ -1,10 +1,11 @@
 "use client";
 
-import { CartCard } from "@/components/custom-ui/cart-card";
+import { CartCard } from "@/components/custom-ui/cards/cart-card";
 import { PageHeader } from "@/components/custom-ui/page-header";
 import { useCart } from "@/components/providers/cart-provider";
 import { Button } from "@/components/shadcn-ui/button";
 import { usePagination } from "@/lib/hooks/use-pagination";
+import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 
@@ -33,11 +34,15 @@ export default function CartPage() {
     >
       <PageHeader>
         <h1 className="text-2xl font-bold w-full align-top">Your Cart</h1>
-        {cart.length > 0 && (
-          <Button className="bg-green-500 hover:bg-green-600 font-semibold">
-            Checkout
-          </Button>
-        )}
+        <Button
+          className={cn(
+            "bg-green-500 hover:bg-green-600 font-semibold",
+            cart.length === 0 && "opacity-50 cursor-not-allowed"
+          )}
+          disabled={cart.length === 0}
+        >
+          Checkout
+        </Button>
       </PageHeader>
       {cart.length > 0 ? (
         <div className="flex flex-col items-center justify-start gap-2.5 w-full">

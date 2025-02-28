@@ -53,7 +53,7 @@ export default function MyAccountPage() {
                   : "text-red-500"
               )}
             >
-              {humanityStatus === "verified" ? "Verified" : "Unverified"}
+              {humanityStatus === "verified" ? "Verified! ✨" : "Unverified"}
             </p>
           </div>
           {humanityStatus === "unverified" && <Button>Verify</Button>}

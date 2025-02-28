@@ -8,6 +8,7 @@ export const env = createEnv({
     JWT_SECRET: z.string().min(1),
     TURSO_DATABASE_URL: z.string().min(1),
     TURSO_AUTH_TOKEN: z.string().min(1),
+    HUMANITY_API_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_URL: z.string().min(1),

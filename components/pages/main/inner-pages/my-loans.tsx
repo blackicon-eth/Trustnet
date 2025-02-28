@@ -8,8 +8,22 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/shadcn-ui/tabs";
+import { TakenLoanCard } from "@/components/custom-ui/cards/taken-loan-card";
+import { mockRequestedLoans } from "@/lib/constants";
+import { usePagination } from "@/lib/hooks/use-pagination";
+import { GivenLoanCard } from "@/components/custom-ui/cards/given-loan-card";
 
 export default function MyLoansPage() {
+  const { currentData: currentTakenLoans, Pager } = usePagination(
+    mockRequestedLoans,
+    5
+  );
+
+  const { currentData: currentGivenLoans, Pager: GivenPager } = usePagination(
+    mockRequestedLoans,
+    4
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -23,7 +37,7 @@ export default function MyLoansPage() {
       </PageHeader>
 
       <Tabs defaultValue="taken" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6 bg-card">
+        <TabsList className="grid w-full grid-cols-2 mb-4 bg-card">
           <TabsTrigger
             value="taken"
             className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=inactive]:bg-transparent"
@@ -37,11 +51,33 @@ export default function MyLoansPage() {
             Offered
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="taken" className="space-y-4">
-          Hello
+        <TabsContent value="taken" className="space-y-2">
+          {mockRequestedLoans.length > 0 ? (
+            <>
+              {currentTakenLoans.map((loan, index) => (
+                <TakenLoanCard key={loan.id} loan={loan} index={index} />
+              ))}
+              <Pager />
+            </>
+          ) : (
+            <div className="flex flex-col h-[300px] items-center justify-center gap-1">
+              <p className="text-sm text-muted-foreground">No loans found</p>
+            </div>
+          )}
         </TabsContent>
-        <TabsContent value="offered" className="space-y-4">
-          Hello
+        <TabsContent value="offered" className="space-y-2">
+          {mockRequestedLoans.length > 0 ? (
+            <>
+              {currentGivenLoans.map((loan, index) => (
+                <GivenLoanCard key={loan.id} loan={loan} index={index} />
+              ))}
+              <GivenPager />
+            </>
+          ) : (
+            <div className="flex flex-col h-[300px] items-center justify-center gap-1">
+              <p className="text-sm text-muted-foreground">No loans found</p>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </motion.div>

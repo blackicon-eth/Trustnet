@@ -4,7 +4,7 @@ import { cn, formatUnixTimestamp } from "@/lib/utils";
 import { motion } from "framer-motion";
 import ky from "ky";
 import { useCallback, useEffect, useState } from "react";
-import { Skeleton } from "../shadcn-ui/skeleton";
+import { Skeleton } from "@/components/shadcn-ui/skeleton";
 import sdk from "@farcaster/frame-sdk";
 import {
   ContextType,
@@ -16,23 +16,25 @@ import {
   DrawerDescription,
   DrawerTitle,
   DrawerTrigger,
-} from "../shadcn-ui/drawer";
-import { Button } from "../shadcn-ui/button";
+} from "@/components/shadcn-ui/drawer";
+import { Button } from "@/components/shadcn-ui/button";
 import { RequestedLoan } from "@/lib/types";
-import { useCart } from "../providers/cart-provider";
-import { LoaderCircle, Trash2 } from "lucide-react";
+import { useCart } from "@/components/providers/cart-provider";
+import { LoaderCircle } from "lucide-react";
 
-interface CartCardProps {
-  loan: RequestedLoan;
+interface RequestedLoanCardProps {
   index: number;
+  loan: RequestedLoan;
 }
 
-export const CartCard = ({ loan, index }: CartCardProps) => {
+export const RequestedLoanCard = ({ index, loan }: RequestedLoanCardProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [isCartLoading, setIsCartLoading] = useState(false);
   const { type: contextType, context } = useMiniAppContext();
-  const { removeItem } = useCart();
+  const { addItem, removeItem, cart } = useCart();
+
+  const isLoanInCart = cart.some((b) => b.id === loan.id);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -66,13 +68,18 @@ export const CartCard = ({ loan, index }: CartCardProps) => {
     >
       <Drawer>
         <DrawerTrigger asChild>
-          <button className="flex items-start justify-start border-[1px] w-full h-full border-card/20 rounded-lg">
+          <button
+            className={cn(
+              "flex items-start justify-start border-[1px] w-full border-card/20 bg-card hover:bg-card/80 transition-all duration-150 rounded-lg",
+              isLoanInCart && "border-green-600/80"
+            )}
+          >
             <img
               src={loan.loanImageUrl}
               alt="Loan Image"
-              className="w-auto h-[90px] rounded-bl-lg rounded-tl-lg object-cover"
+              className="w-auto h-[126px] rounded-bl-lg rounded-tl-lg object-cover"
             />
-            <div className="flex flex-col gap-1.5 px-2.5 py-1.5 w-full h-[90px] justify-start bg-card hover:bg-card/80 transition-all duration-150 items-start">
+            <div className="flex flex-col gap-1.5 px-2.5 py-1.5 size-full justify-start items-start">
               <div className="flex items-center justify-between w-full">
                 <p className="text-lg font-semibold">
                   {loan.title.length > 12
@@ -104,43 +111,27 @@ export const CartCard = ({ loan, index }: CartCardProps) => {
               </div>
               <div className="flex flex-col size-full justify-start items-start">
                 <div className="flex items-center justify-between w-full">
+                  <p className="text-sm">Amount</p>
                   <p className="text-sm">{loan.amount} USDC</p>
-                  <p className="text-sm">{loan.collateralPercentage}% Coll.</p>
                 </div>
                 <div className="flex items-center justify-between w-full">
+                  <p className="text-sm">Collateral</p>
+                  <p className="text-sm">{loan.collateralPercentage}%</p>
+                </div>
+                <div className="flex items-center justify-between w-full">
+                  <p className="text-sm">Interest</p>
+                  <p className="text-sm text-green-400">
+                    {loan.interestPercentage}%
+                  </p>
+                </div>
+                <div className="flex items-center justify-between w-full">
+                  <p className="text-sm">Deadline</p>
                   <p className="text-sm">
                     {formatUnixTimestamp(loan.deadline)}
-                  </p>
-                  <p className="text-sm">
-                    <span className="text-green-400">
-                      {loan.interestPercentage}%
-                    </span>{" "}
-                    Int.
                   </p>
                 </div>
               </div>
             </div>
-            <button
-              onClick={(event) => {
-                event.stopPropagation();
-                setIsCartLoading(true);
-                setTimeout(() => {
-                  removeItem(loan);
-                  setIsCartLoading(false);
-                }, 800);
-              }}
-              disabled={isCartLoading}
-              className={cn(
-                "flex items-center justify-center h-[90px] w-[80px] rounded-br-lg rounded-tr-lg bg-destructive hover:bg-destructive/80 transition-all duration-150",
-                isCartLoading && "bg-card hover:bg-card opacity-50"
-              )}
-            >
-              {isCartLoading ? (
-                <LoaderCircle className="w-5 h-5 animate-spin" />
-              ) : (
-                <Trash2 className="w-5 h-5" />
-              )}
-            </button>
           </button>
         </DrawerTrigger>
         <DrawerContent
@@ -216,21 +207,30 @@ export const CartCard = ({ loan, index }: CartCardProps) => {
             <Button
               onClick={() => {
                 setIsCartLoading(true);
-                setTimeout(() => {
+                if (isLoanInCart) {
                   removeItem(loan);
+                } else {
+                  addItem(loan);
+                }
+                setTimeout(() => {
                   setIsCartLoading(false);
                 }, 800);
               }}
               className={cn(
-                "w-[90%] font-semibold bg-destructive hover:bg-destructive/80",
-                isCartLoading && "bg-card hover:bg-card opacity-50"
+                "w-[90%] font-semibold",
+                isCartLoading && "bg-card hover:bg-card opacity-50",
+                isLoanInCart &&
+                  !isCartLoading &&
+                  "bg-destructive hover:bg-destructive/80"
               )}
               disabled={isCartLoading}
             >
               {isCartLoading ? (
                 <LoaderCircle className="w-5 h-5 animate-spin" />
-              ) : (
+              ) : isLoanInCart ? (
                 "Remove from Cart"
+              ) : (
+                "Add to Cart"
               )}
             </Button>
           </div>

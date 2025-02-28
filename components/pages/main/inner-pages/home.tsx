@@ -1,6 +1,6 @@
 "use client";
 
-import { RequestedLoanCard } from "@/components/custom-ui/requested-loan-card";
+import { RequestedLoanCard } from "@/components/custom-ui/cards/requested-loan-card";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { mockRequestedLoans } from "@/lib/constants";
