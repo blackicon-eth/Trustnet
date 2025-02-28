@@ -32,7 +32,7 @@ export const RequestedLoanCard = ({ index, loan }: RequestedLoanCardProps) => {
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [isCartLoading, setIsCartLoading] = useState(false);
   const { type: contextType, context } = useMiniAppContext();
-  const { addLoan, removeLoan, cart } = useCart();
+  const { addItem, removeItem, cart } = useCart();
 
   const isLoanInCart = cart.some((b) => b.id === loan.id);
 
@@ -206,9 +206,9 @@ export const RequestedLoanCard = ({ index, loan }: RequestedLoanCardProps) => {
               onClick={() => {
                 setIsCartLoading(true);
                 if (isLoanInCart) {
-                  removeLoan(loan);
+                  removeItem(loan);
                 } else {
-                  addLoan(loan);
+                  addItem(loan);
                 }
                 setTimeout(() => {
                   setIsCartLoading(false);

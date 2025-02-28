@@ -14,8 +14,8 @@ export const CartContext = createContext<CartContextType | undefined>(
 export type CartContextType = {
   cart: RequestedLoan[];
   totalAmount: number;
-  addLoan: (loan: RequestedLoan) => void;
-  removeLoan: (loan: RequestedLoan) => void;
+  addItem: (item: RequestedLoan) => void;
+  removeItem: (item: RequestedLoan) => void;
 };
 
 export const useCart = () => {
@@ -30,12 +30,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<RequestedLoan[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0);
 
-  const addLoan = useCallback((loan: RequestedLoan) => {
+  const addItem = useCallback((loan: RequestedLoan) => {
     setCart((prevCart) => [...prevCart, loan]);
     setTotalAmount((prevTotalAmount) => prevTotalAmount + loan.amount);
   }, []);
 
-  const removeLoan = useCallback((loan: RequestedLoan) => {
+  const removeItem = useCallback((loan: RequestedLoan) => {
     setCart((prevCart) => prevCart.filter((b) => b.id !== loan.id));
     setTotalAmount((prevTotalAmount) => prevTotalAmount - loan.amount);
   }, []);
@@ -45,8 +45,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       value={{
         cart,
         totalAmount,
-        addLoan,
-        removeLoan,
+        addItem,
+        removeItem,
       }}
     >
       {children}
