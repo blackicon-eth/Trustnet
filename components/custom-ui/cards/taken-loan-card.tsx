@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { cn, formatUnixTimestamp } from "@/lib/utils";
+import { formatUnixTimestamp } from "@/lib/utils";
 import { motion } from "framer-motion";
 import {
   Drawer,

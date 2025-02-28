@@ -1,6 +1,16 @@
-import { sendFrameNotification } from "@/lib/notifs";
-import { ParseWebhookEvent, parseWebhookEvent, verifyAppKeyWithNeynar } from "@farcaster/frame-node";
 import { NextRequest } from "next/server";
+import {
+  ParseWebhookEvent,
+  parseWebhookEvent,
+  verifyAppKeyWithNeynar,
+} from "@farcaster/frame-node";
+import { createUser, getUserFromFid } from "@/lib/db/queries/user";
+import {
+  deleteUserNotificationDetails,
+  setUserNotificationDetails,
+} from "@/lib/db/queries/notifications";
+import { fetchUserFromNeynar } from "@/lib/neynar/index";
+import { sendFrameNotification } from "@/lib/notifs";
 
 export async function POST(request: NextRequest) {
   const requestJson = await request.json();
@@ -15,56 +25,89 @@ export async function POST(request: NextRequest) {
       case "VerifyJsonFarcasterSignature.InvalidDataError":
       case "VerifyJsonFarcasterSignature.InvalidEventDataError":
         // The request data is invalid
-        return Response.json({ success: false, error: error.message }, { status: 400 });
+        return Response.json(
+          { success: false, error: error.message },
+          { status: 400 }
+        );
       case "VerifyJsonFarcasterSignature.InvalidAppKeyError":
         // The app key is invalid
-        return Response.json({ success: false, error: error.message }, { status: 401 });
+        return Response.json(
+          { success: false, error: error.message },
+          { status: 401 }
+        );
       case "VerifyJsonFarcasterSignature.VerifyAppKeyError":
         // Internal error verifying the app key (caller may want to try again)
-        return Response.json({ success: false, error: error.message }, { status: 500 });
+        return Response.json(
+          { success: false, error: error.message },
+          { status: 500 }
+        );
     }
   }
 
   const fid = data.fid;
   const event = data.event;
 
+  const user = await getUserFromFid(fid.toString());
+
   switch (event.event) {
     case "frame_added":
       if (event.notificationDetails) {
-        // TODO: Get user
-        const user = null;
         if (!user) {
-          // TODO: Create user
+          const neynarUser = await fetchUserFromNeynar(fid.toString());
+          await createUser({
+            farcasterFid: neynarUser.fid.toString(),
+            humanityCustodialAddress: null,
+            farcasterCustodialAddress: neynarUser.custody_address,
+            farcasterEvmAddresses: neynarUser.verified_addresses.eth_addresses,
+            farcasterPfpUrl: neynarUser.pfp_url,
+            farcasterUsername: neynarUser.username,
+            farcasterDisplayName: neynarUser.display_name,
+            farcasterNotificationDetails: null,
+          });
         } else {
-          // TODO: Set user notification details
+          await setUserNotificationDetails(
+            fid.toString(),
+            event.notificationDetails
+          );
         }
         await sendFrameNotification({
           fid,
-          title: "Welcome to Trustnet 🌱",
-          body: "Get an undercollateralized loan with your social reputation",
+          title: "Welcome to TrustNest",
+          body: "TrustNest is a platform for asking and giving undercollateralized loans.",
         });
+        if (!user) {
+          break;
+        }
       } else {
-        // TODO: Delete user notification details
+        await deleteUserNotificationDetails(fid.toString());
       }
-      // TODO: Track event
+
       break;
     case "frame_removed":
-      // TODO: Delete user notification details
-      // TODO: Track event
+      await deleteUserNotificationDetails(fid.toString());
+      if (!user) {
+        break;
+      }
       break;
     case "notifications_enabled":
-      // TODO: Set user notification details
-      // TODO: Send frame notification
+      await setUserNotificationDetails(
+        fid.toString(),
+        event.notificationDetails
+      );
       await sendFrameNotification({
         fid,
-        title: "Ding ding ding",
-        body: "Notifications for Trustnet are now enabled",
+        title: "Ding ding dong 🔔",
+        body: "Notifications for TrustNest are now enabled",
       });
-      // TODO: Track event
+      if (!user) {
+        break;
+      }
       break;
     case "notifications_disabled":
-      // TODO: Delete user notification details
-      // TODO: Track event
+      await deleteUserNotificationDetails(fid.toString());
+      if (!user) {
+        break;
+      }
       break;
   }
 

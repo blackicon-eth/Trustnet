@@ -62,6 +62,3 @@ export default function MyAccountPage() {
     </motion.div>
   );
 }
-function useUser(): { user: any } {
-  throw new Error("Function not implemented.");
-}
