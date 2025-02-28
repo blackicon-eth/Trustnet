@@ -27,6 +27,7 @@ export const useSignIn = () => {
           .get("/api/auth/check")
           .json<{ user: User | null }>();
         if (user) {
+          console.log("User found in cookies, signing it in...");
           setIsSignedIn(true);
           setIsLoading(false);
           return { user, token: null };
@@ -79,6 +80,7 @@ export const useSignIn = () => {
   const logout = useCallback(() => {
     localStorage.removeItem("token");
     setIsSignedIn(false);
+    window.location.reload();
   }, []);
 
   return { signIn, logout, isSignedIn, isLoading, error };

@@ -7,6 +7,7 @@ import { mockRequestedLoans } from "@/lib/constants";
 import { usePagination } from "@/lib/hooks/use-pagination";
 import { FiltersButton } from "@/components/custom-ui/filters-button";
 import { useLoansFilter } from "@/lib/hooks/use-loans-filter";
+import { PageHeader } from "@/components/custom-ui/page-header";
 
 export default function HomePage() {
   const [filters, setFilters] = useState({
@@ -30,10 +31,10 @@ export default function HomePage() {
       exit={{ opacity: 0 }}
       className="flex flex-col items-center justify-start size-full p-4 gap-3.5"
     >
-      <div className="flex items-center justify-between w-full">
+      <PageHeader>
         <h1 className="text-2xl font-bold w-full align-top">Available Loans</h1>
         <FiltersButton filters={filters} setFilters={setFilters} />
-      </div>
+      </PageHeader>
       {filteredLoans.length > 0 ? (
         <>
           <div className="flex flex-col items-center justify-start gap-2.5 w-full">

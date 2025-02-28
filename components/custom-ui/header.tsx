@@ -1,14 +1,27 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { Skeleton } from "../shadcn-ui/skeleton";
 import { useRegisteredUser } from "../providers/user-provider";
 import { usePageContent } from "../providers/page-content-provider";
 import { PageContent } from "@/lib/enums";
+import {
+  ContextType,
+  useMiniAppContext,
+} from "@/lib/hooks/use-miniapp-context";
+import { useCallback } from "react";
+import sdk from "@farcaster/frame-sdk";
+
 export const Header = () => {
   const { user } = useRegisteredUser();
   const { setPageContent } = usePageContent();
+  const { context, type: contextType } = useMiniAppContext();
+
+  const openWarpcastUrl = useCallback(() => {
+    sdk.actions.viewProfile({
+      fid: Number(user?.farcasterFid),
+    });
+  }, [user?.farcasterFid]);
 
   return (
     <motion.header
@@ -27,13 +40,24 @@ export const Header = () => {
           </div>
         </button>
         {user ? (
-          <img
-            src={user.farcasterPfpUrl ?? ""}
-            alt="User Profile Picture"
-            width={44}
-            height={44}
-            className="rounded-full"
-          />
+          <>
+            <button
+              onClick={(event) => {
+                event.stopPropagation();
+                if (context && contextType === ContextType.Farcaster) {
+                  openWarpcastUrl();
+                }
+              }}
+            >
+              <img
+                src={user.farcasterPfpUrl ?? ""}
+                alt="User Profile Picture"
+                width={44}
+                height={44}
+                className="rounded-full"
+              />
+            </button>
+          </>
         ) : (
           <Skeleton className="h-[44px] w-[44px] rounded-full bg-skeleton" />
         )}

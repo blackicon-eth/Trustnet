@@ -1,11 +1,27 @@
 "use client";
 
-import { RequestedLoanCard } from "@/components/custom-ui/requested-loan-card";
+import { CartCard } from "@/components/custom-ui/cart-card";
+import { PageHeader } from "@/components/custom-ui/page-header";
 import { useCart } from "@/components/providers/cart-provider";
+import { Button } from "@/components/shadcn-ui/button";
+import { usePagination } from "@/lib/hooks/use-pagination";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 
 export default function CartPage() {
-  const { cart, removeItem } = useCart();
+  const { cart } = useCart();
+  const {
+    currentData: currentCart,
+    Pager,
+    currentPage,
+    handlePageChange,
+  } = usePagination(cart, 4);
+
+  useEffect(() => {
+    if (currentCart.length === 0 && currentPage > 1) {
+      handlePageChange(currentPage - 1);
+    }
+  }, [currentCart, currentPage, handlePageChange]);
 
   return (
     <motion.div
@@ -15,22 +31,34 @@ export default function CartPage() {
       exit={{ opacity: 0 }}
       className="flex flex-col items-center justify-start size-full p-4 gap-3.5"
     >
-      <div className="flex items-center justify-between w-full">
+      <PageHeader>
         <h1 className="text-2xl font-bold w-full align-top">Your Cart</h1>
-      </div>
+        {cart.length > 0 && (
+          <Button className="bg-green-500 hover:bg-green-600 font-semibold">
+            Checkout
+          </Button>
+        )}
+      </PageHeader>
       {cart.length > 0 ? (
         <div className="flex flex-col items-center justify-start gap-2.5 w-full">
-          {cart.map((item) => (
-            <RequestedLoanCard key={item.id} index={0} loan={item} />
+          {currentCart.map((item, index) => (
+            <CartCard key={item.id} index={index} loan={item} />
           ))}
+          <Pager />
         </div>
       ) : (
-        <div className="flex flex-col h-[300px] items-center justify-center gap-1">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          exit={{ opacity: 0 }}
+          className="flex flex-col h-[300px] items-center justify-center gap-1"
+        >
           <p className="text-2xl font-bold">There&apos;s nothing here :(</p>
           <p className="text-sm text-muted-foreground">
             Add some items to your cart to get started!
           </p>
-        </div>
+        </motion.div>
       )}
     </motion.div>
   );
