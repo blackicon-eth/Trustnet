@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "TrustNET",
     openGraph: {
       title: "TrustNET",
-      description: "Undercollateralized lending protocol",
+      description: "Undercollateralized lending protocol.",
     },
     other: {
       "fc:frame": JSON.stringify(frame),
