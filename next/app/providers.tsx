@@ -14,18 +14,27 @@ const ErudaProvider = dynamic(
   }
 );
 
+const CustomWagmiProvider = dynamic(
+  () => import("@/lib/wagmi/custom-wagmi-provider").then((c) => c.default),
+  {
+    ssr: false,
+  }
+);
+
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <ErudaProvider>
-      <FrameProvider>
-        <UserProvider>
-          <CartProvider>
-            <PageContentProvider>
-              <NavigationProvider>{children}</NavigationProvider>
-            </PageContentProvider>
-          </CartProvider>
-        </UserProvider>
-      </FrameProvider>
+      <CustomWagmiProvider>
+        <FrameProvider>
+          <UserProvider>
+            <CartProvider>
+              <PageContentProvider>
+                <NavigationProvider>{children}</NavigationProvider>
+              </PageContentProvider>
+            </CartProvider>
+          </UserProvider>
+        </FrameProvider>
+      </CustomWagmiProvider>
     </ErudaProvider>
   );
 };

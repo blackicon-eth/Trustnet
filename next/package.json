@@ -19,6 +19,7 @@
     "@farcaster/frame-core": "^0.0.24",
     "@farcaster/frame-node": "^0.0.13",
     "@farcaster/frame-sdk": "^0.0.26",
+    "@farcaster/frame-wagmi-connector": "^0.0.17",
     "@frames.js/debugger": "^0.4.3",
     "@hookform/resolvers": "^4.1.2",
     "@libsql/client": "^0.14.0",
@@ -55,6 +56,7 @@
     "uuid": "^11.1.0",
     "vaul": "^1.1.2",
     "viem": "^2.23.4",
+    "wagmi": "^2.14.12",
     "zod": "^3.24.2"
   },
   "devDependencies": {
