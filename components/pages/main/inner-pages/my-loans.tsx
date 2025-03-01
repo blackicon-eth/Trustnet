@@ -9,18 +9,18 @@ import {
   TabsTrigger,
 } from "@/components/shadcn-ui/tabs";
 import { TakenLoanCard } from "@/components/custom-ui/cards/taken-loan-card";
-import { mockRequestedLoans } from "@/lib/constants";
+import { mockTakenLoans, mockOfferedLoans } from "@/lib/constants";
 import { usePagination } from "@/lib/hooks/use-pagination";
 import { GivenLoanCard } from "@/components/custom-ui/cards/given-loan-card";
 
 export default function MyLoansPage() {
   const { currentData: currentTakenLoans, Pager } = usePagination(
-    mockRequestedLoans,
+    mockTakenLoans,
     5
   );
 
   const { currentData: currentGivenLoans, Pager: GivenPager } = usePagination(
-    mockRequestedLoans,
+    mockOfferedLoans,
     4
   );
 
@@ -52,7 +52,7 @@ export default function MyLoansPage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="taken" className="space-y-2">
-          {mockRequestedLoans.length > 0 ? (
+          {mockTakenLoans.length > 0 ? (
             <>
               {currentTakenLoans.map((loan, index) => (
                 <TakenLoanCard key={loan.id} loan={loan} index={index} />
@@ -66,7 +66,7 @@ export default function MyLoansPage() {
           )}
         </TabsContent>
         <TabsContent value="offered" className="space-y-2">
-          {mockRequestedLoans.length > 0 ? (
+          {mockOfferedLoans.length > 0 ? (
             <>
               {currentGivenLoans.map((loan, index) => (
                 <GivenLoanCard key={loan.id} loan={loan} index={index} />

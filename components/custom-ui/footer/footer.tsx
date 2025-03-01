@@ -23,7 +23,7 @@ const Footer = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex relative justify-between items-end border-t-[1px] border-[#323232] bg-background text-white py-3.5 px-5 sm:px-32">
+      <div className="flex relative justify-between items-end border-t-[1px] border-[#323232] bg-background text-white py-3.5 px-3 sm:px-32">
         {/* Home */}
         <FooterButton
           icon={
