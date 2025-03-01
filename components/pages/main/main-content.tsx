@@ -7,6 +7,8 @@ import { PageContent } from "@/lib/enums";
 import CartPage from "./inner-pages/cart";
 import MyLoansPage from "./inner-pages/my-loans";
 import MyAccountPage from "./inner-pages/my-account";
+import NewLoanPage from "./inner-pages/new-loan";
+
 export default function MainContent() {
   const { pageContent } = usePageContent();
 
@@ -18,6 +20,7 @@ export default function MainContent() {
       {pageContent === PageContent.MY_ACCOUNT && (
         <MyAccountPage key="my-account" />
       )}
+      {pageContent === PageContent.NEW_LOAN && <NewLoanPage key="new-loan" />}
     </AnimatePresence>
   );
 }

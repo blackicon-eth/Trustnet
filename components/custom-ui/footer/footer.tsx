@@ -1,7 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { House, ReceiptText, ShoppingCart, User } from "lucide-react";
+import {
+  House,
+  ReceiptText,
+  ShoppingCart,
+  SquarePlus,
+  User,
+} from "lucide-react";
 import { FooterButton } from "./footer-button";
 import { usePageContent } from "@/components/providers/page-content-provider";
 import { PageContent } from "@/lib/enums";
@@ -42,6 +48,20 @@ const Footer = () => {
           }
           label="My Loans"
           onClick={() => setPageContent(PageContent.MY_LOANS)}
+        />
+
+        {/* New Loan */}
+        <FooterButton
+          icon={
+            <SquarePlus
+              size={24}
+              className={
+                pageContent === PageContent.NEW_LOAN ? "text-primary" : ""
+              }
+            />
+          }
+          label="New Loan"
+          onClick={() => setPageContent(PageContent.NEW_LOAN)}
         />
 
         {/* Cart */}

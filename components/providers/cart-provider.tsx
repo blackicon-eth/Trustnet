@@ -4,6 +4,7 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useMemo,
   useState,
 } from "react";
 
@@ -14,6 +15,8 @@ export const CartContext = createContext<CartContextType | undefined>(
 export type CartContextType = {
   cart: RequestedLoan[];
   totalAmount: number;
+  averageInterest: number;
+  averageCollateral: number;
   addItem: (item: RequestedLoan) => void;
   removeItem: (item: RequestedLoan) => void;
 };
@@ -30,6 +33,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<RequestedLoan[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0);
 
+  const averageInterest = useMemo(() => {
+    return (
+      cart.reduce((acc, loan) => acc + loan.interestPercentage, 0) / cart.length
+    );
+  }, [cart]);
+
+  const averageCollateral = useMemo(() => {
+    return (
+      cart.reduce((acc, loan) => acc + loan.collateralPercentage, 0) /
+      cart.length
+    );
+  }, [cart]);
+
   const addItem = useCallback((loan: RequestedLoan) => {
     setCart((prevCart) => [...prevCart, loan]);
     setTotalAmount((prevTotalAmount) => prevTotalAmount + loan.amount);
@@ -45,6 +61,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       value={{
         cart,
         totalAmount,
+        averageInterest,
+        averageCollateral,
         addItem,
         removeItem,
       }}
