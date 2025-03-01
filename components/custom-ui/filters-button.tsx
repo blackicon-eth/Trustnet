@@ -15,7 +15,6 @@ import {
 } from "@/components/shadcn-ui/form";
 import { Input } from "@/components/shadcn-ui/input";
 import { Slider } from "@/components/shadcn-ui/slider";
-import { useForm } from "../../node_modules/.pnpm/react-hook-form@7.54.2_react@18.3.1/node_modules/react-hook-form/dist";
 import { format } from "date-fns";
 import { Calendar } from "@/components/shadcn-ui/calendar";
 import {
@@ -29,6 +28,7 @@ import { Button } from "@/components/shadcn-ui/button";
 import { Filter } from "lucide-react";
 import { useState } from "react";
 import { Filters } from "@/lib/types";
+import { useForm } from "react-hook-form";
 
 interface FiltersButtonProps {
   filters: Filters;
