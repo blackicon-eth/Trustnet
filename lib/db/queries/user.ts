@@ -63,3 +63,18 @@ export const updateUser = async (
 
   return result[0];
 };
+
+/**
+ * Set a user's humanity verification status
+ * @param fid - The Farcaster FID of the user
+ * @param isHumanityVerified - The new status of the user's humanity verification
+ */
+export const setUserIsHumanityVerified = async (
+  fid: string,
+  isHumanityVerified: number
+) => {
+  await db
+    .update(userTable)
+    .set({ isHumanityVerified })
+    .where(eq(userTable.farcasterFid, fid));
+};

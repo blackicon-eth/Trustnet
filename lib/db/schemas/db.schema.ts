@@ -1,10 +1,10 @@
 import { sql } from "drizzle-orm";
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const userTable = sqliteTable("user", {
   farcasterFid: text("farcaster_fid").primaryKey(),
 
-  humanityCustodialAddress: text("humanity_custodial_address").unique(),
+  isHumanityVerified: int("is_humanity_verified").default(0),
   farcasterCustodialAddress: text("farcaster_custodial_address").unique(),
 
   farcasterEvmAddresses: text("farcaster_evm_addresses", {

@@ -101,11 +101,20 @@ export const RequestedLoanCard = ({ index, loan }: RequestedLoanCardProps) => {
                     <p className="text-sm underline">
                       {user?.farcasterUsername}
                     </p>
-                    <img
-                      src={user?.farcasterPfpUrl ?? ""}
-                      alt="User PFP"
-                      className="w-5 h-5 rounded-full"
-                    />
+                    <div className="relative">
+                      <img
+                        src={user?.farcasterPfpUrl ?? ""}
+                        alt="User PFP"
+                        className="w-5 h-5 rounded-full"
+                      />
+                      {user?.isHumanityVerified === 1 && (
+                        <img
+                          src="/images/humanity_logo.png"
+                          alt="Humanity Logo"
+                          className="w-3 h-3 rounded-full absolute -top-1 -right-1"
+                        />
+                      )}
+                    </div>
                   </button>
                 )}
               </div>
@@ -195,6 +204,21 @@ export const RequestedLoanCard = ({ index, loan }: RequestedLoanCardProps) => {
                     <p className="text-base">Deadline</p>
                     <p className="text-base">
                       {formatUnixTimestamp(loan.deadline)}
+                    </p>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <p className="text-base">Humanity</p>
+                    <p
+                      className={cn(
+                        "text-base",
+                        user?.isHumanityVerified === 1
+                          ? "text-green-400"
+                          : "text-red-400"
+                      )}
+                    >
+                      {user?.isHumanityVerified === 1
+                        ? "Verified! ✨"
+                        : "Unverified"}
                     </p>
                   </div>
                 </div>

@@ -7,7 +7,7 @@ export const config = {
 };
 
 export default async function middleware(req: NextRequest) {
-  // Skip auth check for sign-in endpoint
+  // Skip auth check for endpoints that don't need it
   if (
     req.nextUrl.pathname === "/api/auth/sign-in" ||
     req.nextUrl.pathname.includes("/api/og") ||
@@ -33,7 +33,7 @@ export default async function middleware(req: NextRequest) {
 
     // Clone the request headers to add user info
     const requestHeaders = new Headers(req.headers);
-    requestHeaders.set("x-user-fid", payload.fid as string);
+    requestHeaders.set("x-user-fid", payload.userFid as string);
 
     // Return response with modified headers
     return NextResponse.next({

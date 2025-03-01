@@ -3,6 +3,7 @@ import * as jose from "jose";
 import { verifyMessage } from "viem";
 import { fetchUserFromNeynar } from "@/lib/neynar/index";
 import { createUser, getUserFromFid } from "@/lib/db/queries/user";
+import { env } from "@/lib/env";
 
 export const POST = async (req: NextRequest) => {
   const { signature, message, fid } = await req.json();
@@ -37,7 +38,7 @@ export const POST = async (req: NextRequest) => {
   if (!user) {
     user = await createUser({
       farcasterFid: neynarUser.fid.toString(),
-      humanityCustodialAddress: null,
+      isHumanityVerified: 0,
       farcasterCustodialAddress: walletAddress,
       farcasterEvmAddresses: neynarUser.verified_addresses.eth_addresses,
       farcasterPfpUrl: neynarUser.pfp_url,
@@ -50,7 +51,7 @@ export const POST = async (req: NextRequest) => {
   }
 
   // Generate JWT token
-  const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+  const secret = new TextEncoder().encode(env.JWT_SECRET);
   const token = await new jose.SignJWT({
     userFid: user.farcasterFid,
     walletAddress,

@@ -9,10 +9,12 @@ import { FullPageError } from "../custom-ui/fullpage-error";
 import { useSignIn } from "@/lib/hooks/use-sign-in";
 import { User } from "@/lib/db/schemas/db.schema";
 import { FullPageLoader } from "../custom-ui/fullpage-loader";
+import ky from "ky";
 
 const UserProviderContext = createContext<
   | {
       user: User | null;
+      refetchUser: () => Promise<void>;
     }
   | undefined
 >(undefined);
@@ -43,6 +45,20 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     registerUser();
   }, [signIn]);
 
+  // Function to refetch the user
+  const refetchUser = async () => {
+    try {
+      const { user } = await ky
+        .get("/api/auth/check")
+        .json<{ user: User | null }>();
+      if (user) {
+        setUser(user);
+      }
+    } catch {
+      console.log("Error while refetching user");
+    }
+  };
+
   // Loading state
   if (isSigningIn) {
     return <FullPageLoader />;
@@ -67,6 +83,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     <UserProviderContext.Provider
       value={{
         user,
+        refetchUser,
       }}
     >
       {children}

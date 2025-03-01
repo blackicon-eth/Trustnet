@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
           const neynarUser = await fetchUserFromNeynar(fid.toString());
           await createUser({
             farcasterFid: neynarUser.fid.toString(),
-            humanityCustodialAddress: null,
+            isHumanityVerified: 0,
             farcasterCustodialAddress: neynarUser.custody_address,
             farcasterEvmAddresses: neynarUser.verified_addresses.eth_addresses,
             farcasterPfpUrl: neynarUser.pfp_url,

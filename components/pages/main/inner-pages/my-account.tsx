@@ -3,17 +3,38 @@
 import { motion } from "framer-motion";
 import { PageHeader } from "@/components/custom-ui/page-header";
 import { Button } from "@/components/shadcn-ui/button";
-import { cn } from "@/lib/utils";
-import { useState } from "react";
 import { useRegisteredUser } from "@/components/providers/user-provider";
 import { useSignIn } from "@/lib/hooks/use-sign-in";
+import Link from "next/link";
+import { toast } from "sonner";
+import ky from "ky";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 export default function MyAccountPage() {
   const { logout } = useSignIn();
-  const { user } = useRegisteredUser();
-  const [humanityStatus, setHumanityStatus] = useState<
-    "verified" | "unverified"
-  >("verified");
+  const { user, refetchUser } = useRegisteredUser();
+  const [isVerifying, setIsVerifying] = useState(false);
+
+  const handleVerifyHumanity = async () => {
+    try {
+      setIsVerifying(true);
+      const { updated } = await ky
+        .put<{ updated: boolean }>("/api/humanity")
+        .json();
+      if (updated) {
+        await refetchUser();
+        toast.success("Humanity verified!");
+      } else {
+        toast.error("No humanity credential found :(");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error verifying humanity");
+    } finally {
+      setIsVerifying(false);
+    }
+  };
 
   return (
     <motion.div
@@ -34,7 +55,7 @@ export default function MyAccountPage() {
             <p className="text-base text-primary">{user?.farcasterUsername}</p>
           </div>
           <Button
-            className="bg-destructive hover:bg-destructive/80"
+            className="bg-destructive hover:bg-destructive/80 w-[90px]"
             onClick={logout}
           >
             Logout
@@ -44,19 +65,32 @@ export default function MyAccountPage() {
         {/* Humanity Status */}
         <div className="flex items-center justify-between w-full">
           <div className="flex flex-col items-start justify-start">
-            <p className="text-base font-medium">Humanity Status</p>
-            <p
-              className={cn(
-                "text-base",
-                humanityStatus === "verified"
-                  ? "text-green-500"
-                  : "text-red-500"
-              )}
+            <Link
+              href="https://docs.humanity.org/"
+              target="_blank"
+              className="text-base font-medium underline"
             >
-              {humanityStatus === "verified" ? "Verified! ✨" : "Unverified"}
-            </p>
+              Humanity Status
+            </Link>
+            {user?.isHumanityVerified === 0 && (
+              <p className="text-base text-red-500">Unverified</p>
+            )}
           </div>
-          {humanityStatus === "unverified" && <Button>Verify</Button>}
+          {user?.isHumanityVerified === 0 ? (
+            <Button
+              className="w-[90px]"
+              onClick={handleVerifyHumanity}
+              disabled={isVerifying}
+            >
+              {isVerifying ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Verify"
+              )}
+            </Button>
+          ) : (
+            <p className="text-lg font-semibold text-green-500">Verified! ✨</p>
+          )}
         </div>
       </div>
     </motion.div>
